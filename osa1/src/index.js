@@ -13,9 +13,9 @@ const Subheader = (props) => {
 const Content = (props) => {
   console.log(props)
   return (
-    <>
-      <p>{props.type} {props.count}</p>
-    </>
+    <div>
+      {props.text} {props.value}
+    </div>
   )
 }
 
@@ -34,6 +34,20 @@ const App = () => {
   const feedbackText = 'give feedback'
   const statisticsText = 'statistics'
 
+  const sum = () => {
+    return (good + neutral + bad)
+  }
+
+  const average = () => {
+    return (good * 1 + bad * -1) / sum()
+  }
+
+  const positive = () => {
+    const average = good / sum()
+    return average * 100
+  }
+
+
   return (
     <div>
       <Subheader text={feedbackText} />
@@ -41,9 +55,14 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text="neutral" />
       <Button handleClick={() => setBad(bad + 1)} text="bad" />
       <Subheader text={statisticsText} />
-      <Content type="good" count={good} />
-      <Content type="neutral" count={neutral} />
-      <Content type="bad" count={bad} />
+      <Content text="good" value={good} />
+      <Content text="neutral" value={neutral} />
+      <Content text="bad" value={bad} />
+      <Content text="all" value={sum()} />
+      <Content text="average" value={average()} />
+      <div>
+        positive {positive()} %
+      </div>
     </div>
   )
 }
