@@ -10,11 +10,11 @@ const Subheader = (props) => {
   )
 }
 
-const Content = (props) => {
+const StatisticLine = (props) => {
   console.log(props)
   return (
     <div>
-      {props.text} {props.value}
+      {props.text} {props.value} {props.char}
     </div>
   )
 }
@@ -56,14 +56,12 @@ const Statistics = (props) => {
   return (
     <>
       <Subheader text={statisticsText} />
-      <Content text="good" value={good} />
-      <Content text="neutral" value={neutral} />
-      <Content text="bad" value={bad} />
-      <Content text="all" value={sum()} />
-      <Content text="average" value={average()} />
-      <div>
-        positive {positive()} %
-      </div>
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={sum()} />
+      <StatisticLine text="average" value={average()} />
+      <StatisticLine text="positive" value={positive()} char="%" />
     </>
   )
 }
