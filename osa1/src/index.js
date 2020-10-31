@@ -4,11 +4,21 @@ import ReactDOM from 'react-dom'
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
 const App = (props) => {
+
   const [selected, setSelected] = useState(0)
+  const [points, setVotes] = useState(new Array(anecdotes.length).fill(0))
 
   //if(selected == anecdotes.length) {
   //  setSelected(0);
   //}
+
+  const addPoint = () => {
+    const copy = { ...points }
+    // kasvatetaan olion kentän 2 arvoa yhdellä
+    copy[selected] += 1
+    console.log(copy)
+    return copy;
+  }
 
   const getRandomInt = () => {
     const max = anecdotes.length
@@ -17,10 +27,11 @@ const App = (props) => {
     return randomInt
   }
   
-  
   return (
     <div>
       {props.anecdotes[selected]}<br />
+      has {points[selected]} votes<br />
+      <Button handleClick={() => setVotes(addPoint())} text="vote" />
       <Button handleClick={() => setSelected(getRandomInt())} text="next anecdote" />
     </div>
   )
