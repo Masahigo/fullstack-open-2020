@@ -42,6 +42,17 @@ const Statistics = (props) => {
     return average * 100
   }
 
+  if (sum() === 0) {
+    return (
+      <>
+      <Subheader text={statisticsText} />
+      <div>
+        No feedback given
+      </div>
+      </>
+    )
+  }
+
   return (
     <>
       <Subheader text={statisticsText} />
