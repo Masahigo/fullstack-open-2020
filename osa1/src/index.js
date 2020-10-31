@@ -1,97 +1,41 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Subheader = (props) => {
-  console.log(props)
-  return (
-    <>
-      <h2>{props.text}</h2>
-    </>
-  )
-}
+const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
-const StatisticLine = (props) => {
-  console.log(props)
-  const { text, value, char } = props
-  //const content = `${ text } ${ value } ${ char }`
-  return (
-    <tr>
-      <td>{text}</td>
-      <td>{value} {char}</td>
-    </tr>
-  )
-}
+const App = (props) => {
+  const [selected, setSelected] = useState(0)
 
-const Button = (props) => (
-  <button onClick={props.handleClick}>
-    {props.text}
-  </button>
-)
+  //if(selected == anecdotes.length) {
+  //  setSelected(0);
+  //}
 
-const Statistics = (props) => {
-  const { good, neutral, bad } = props
-  const statisticsText = 'statistics'
-
-  const sum = () => {
-    return (good + neutral + bad)
+  const getRandomInt = () => {
+    const max = anecdotes.length
+    const randomInt = Math.floor(Math.random() * Math.floor(max))
+    console.log(randomInt)
+    return randomInt
   }
-
-  const average = () => {
-    return (good * 1 + bad * -1) / sum()
-  }
-
-  const positive = () => {
-    const average = good / sum()
-    return average * 100
-  }
-
-  if (sum() === 0) {
-    return (
-      <>
-      <Subheader text={statisticsText} />
-      <div>
-        No feedback given
-      </div>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <Subheader text={statisticsText} />
-      <table>
-        <tbody>
-          <StatisticLine text="good" value={good} />
-          <StatisticLine text="neutral" value={neutral} />
-          <StatisticLine text="bad" value={bad} />
-          <StatisticLine text="all" value={sum()} />
-          <StatisticLine text="average" value={average()} />
-          <StatisticLine text="positive" value={positive()} char="%" />
-        </tbody>
-      </table>
-    </>
-  )
-}
-
-const App = () => {
-  // tallenna napit omaan tilaansa
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-
-  const feedbackText = 'give feedback'
-
+  
+  
   return (
     <div>
-      <Subheader text={feedbackText} />
-      <Button handleClick={() => setGood(good + 1)} text="good" />
-      <Button handleClick={() => setNeutral(neutral + 1)} text="neutral" />
-      <Button handleClick={() => setBad(bad + 1)} text="bad" />
-      <Statistics good={good} neutral={neutral} bad={bad} />
+      {props.anecdotes[selected]}<br />
+      <Button handleClick={() => setSelected(getRandomInt())} text="next anecdote" />
     </div>
   )
 }
 
-ReactDOM.render(<App />, 
+const anecdotes = [
+  'If it hurts, do it more often',
+  'Adding manpower to a late software project makes it later!',
+  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+  'Premature optimization is the root of all evil.',
+  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
+]
+
+ReactDOM.render(
+  <App anecdotes={anecdotes} />,
   document.getElementById('root')
 )
