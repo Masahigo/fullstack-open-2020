@@ -34,9 +34,9 @@ const Content = (props) => {
 const Total = (props) => {
   console.log(props)
   const { parts } = props
-  const totalAmount = parts.reduce((sum, part) =>
-    sum + part.exercises
-  , 0)
+  const totalAmount = parts.reduce((sum, part) => {
+    return sum + part.exercises
+  }, 0)
   
   return (
     <>
