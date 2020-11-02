@@ -20,7 +20,7 @@ const Part = (props) => {
 }
 
 const Content = (props) => {
-  console.log(props)
+  //console.log(props)
   const { parts } = props
   return (
     <>
@@ -32,10 +32,15 @@ const Content = (props) => {
 }
 
 const Total = (props) => {
-  //console.log(props)
+  console.log(props)
+  const { parts } = props
+  const totalAmount = parts.reduce((sum, part) =>
+    sum + part.exercises
+  , 0)
+  
   return (
     <>
-      <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
+      <p><b>Total of {totalAmount} exercises</b></p>
     </>
   )
 }
@@ -45,6 +50,7 @@ const Course = ({ course }) => {
     <>
       <Header title={course.name} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </>
   )
 }
@@ -68,6 +74,11 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Random topic',
+        exercises: 5,
+        id: 4
       }
     ]
   }
