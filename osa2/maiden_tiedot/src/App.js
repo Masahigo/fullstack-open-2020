@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, showClick, clearClick }) => {
   if(countries.length > 10) {
     return (
       <div>
@@ -14,7 +14,10 @@ const Countries = ({ countries }) => {
     return (
       <>
         {countries.map(country =>
-            <div key={country.numericCode}>{country.name}</div>
+            <div key={country.numericCode}>
+              {country.name}
+              <button onClick={() => showClick(country.numericCode)}>show</button>
+            </div>
         )}
       </>
     )
@@ -47,6 +50,9 @@ const Countries = ({ countries }) => {
             )}
           </ul>
           <img src={country.flag} alt="flag" style={imgStyle} />
+          <p>
+            <button onClick={() => clearClick()}>back to list view</button>
+          </p>
         </div>
       )}
     </>
@@ -57,6 +63,7 @@ const Countries = ({ countries }) => {
 const App = () => {
   const [ countries, setCountries] = useState([])
   const [ countryFilter, setCountryFilter ] = useState('')
+  const [ selectedCountry, setSelectedCountry] = useState([])
 
   useEffect(() => {
     console.log('effect')
@@ -74,9 +81,21 @@ const App = () => {
     setCountryFilter(event.target.value)
   }
 
+  const handleCountryClick = (id) => {
+    //console.log('country with id ' + id + ' needs to be shown')
+    const country = countries.filter(country => country.numericCode === id)
+    console.log('selected country: ', country)
+    setSelectedCountry(country)
+  }
+
+  const handleClearClick = () => {
+    //setCountryFilter('')
+    setSelectedCountry([])
+  }
+
   const countriesToShow = countryFilter.length === 0
     ? countries
-    : countries.filter(country => country.name.toLowerCase().includes(countryFilter))
+    : selectedCountry.length > 0 ? selectedCountry : countries.filter(country => country.name.toLowerCase().includes(countryFilter))
 
   return (
     <div>find countries&nbsp;
@@ -84,7 +103,7 @@ const App = () => {
           value={countryFilter} 
           onChange={handleFilterChange} 
         />
-        <Countries countries={countriesToShow} />
+        <Countries countries={countriesToShow} showClick={handleCountryClick} clearClick={handleClearClick} />
     </div>
   )
 
