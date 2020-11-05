@@ -71,10 +71,20 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
 
-    if(persons.filter(person => person.name === newName).length > 0) {
-      console.log('name found already: ', newName)
-      const alertMessage = `${newName} is already added to phonebook`
-      alert(alertMessage)
+    const updatePerson = persons.find(p => p.name === newName)
+    if(updatePerson) {
+      console.log('update person: ', updatePerson)
+      const message = `${newName} is already added to phonebook, replace the old number with a new one?`
+      const result = window.confirm(message)
+      if(result) {
+        const changedPerson = { ...updatePerson, number: newNumber }
+        console.log('changed person: ', changedPerson)
+        personsService
+          .update(updatePerson.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id !== updatePerson.id ? person : returnedPerson))
+          })
+      }
     } else {
       const personObject = {
         name: newName,

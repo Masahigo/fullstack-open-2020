@@ -24,6 +24,11 @@
       "name": "Michael Burnham",
       "number": "12-34-5678",
       "id": 5
+    },
+    {
+      "name": "New funky person",
+      "number": "32132151",
+      "id": 6
     }
   ]
 }
