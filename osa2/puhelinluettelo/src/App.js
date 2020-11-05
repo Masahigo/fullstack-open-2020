@@ -77,6 +77,15 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(initialPersons)
       })
+      .catch(error => {
+
+        const notificationMessageObject = {
+          content: `Could not connect to server (db.json)`,
+          type: 'error',
+        }
+
+        setNotificationMessage(notificationMessageObject)
+      })
   }, [])
   
   console.log('render', persons.length, 'persons')
@@ -111,7 +120,7 @@ const App = () => {
           .catch(error => {
 
             const notificationMessageObject = {
-              content: `Person '${updatePerson.name}' was already removed from server`,
+              content: `Information of '${updatePerson.name}' has already been removed from server`,
               type: 'error',
             }
 
