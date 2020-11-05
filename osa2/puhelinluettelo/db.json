@@ -29,6 +29,11 @@
       "name": "New funky person",
       "number": "32132151",
       "id": 6
+    },
+    {
+      "name": "Another person",
+      "number": "141412412",
+      "id": 7
     }
   ]
 }

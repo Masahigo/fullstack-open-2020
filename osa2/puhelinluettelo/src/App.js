@@ -50,11 +50,24 @@ const Persons = ({ persons, deleteClick }) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message.content === null) {
+    return null
+  }
+
+  return (
+    <div className={message.type}>
+      {message.content}
+    </div>
+  )
+}
+
 const App = () => {
   const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ nameFilter, setNameFilter ] = useState('')
+  const [ notificationMessage, setNotificationMessage] = useState({ content: null, type: null })
 
   useEffect(() => {
     console.log('effect')
@@ -83,6 +96,32 @@ const App = () => {
           .update(updatePerson.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(person => person.id !== updatePerson.id ? person : returnedPerson))
+
+            const notificationMessageObject = {
+              content: `Updated phone number for ${returnedPerson.name}`,
+              type: 'success',
+            }
+  
+            setNotificationMessage(notificationMessageObject)
+  
+            setTimeout(() => {
+              setNotificationMessage({ content: null, type: null})
+            }, 2000)
+          })
+          .catch(error => {
+
+            const notificationMessageObject = {
+              content: `Person '${updatePerson.name}' was already removed from server`,
+              type: 'error',
+            }
+
+            setNotificationMessage(notificationMessageObject)
+
+            setTimeout(() => {
+              setNotificationMessage({ content: null, type: null})
+            }, 5000)
+
+            setPersons(persons.filter(p => p.id !== updatePerson.id))
           })
       }
     } else {
@@ -94,10 +133,21 @@ const App = () => {
       personsService
         .create(personObject)
         .then(returnedPerson => {
-          console.log('promise fulfilled')
+          //console.log('promise fulfilled')
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          
+          const notificationMessageObject = {
+            content: `Added ${returnedPerson.name}`,
+            type: 'success',
+          }
+
+          setNotificationMessage(notificationMessageObject)
+
+          setTimeout(() => {
+            setNotificationMessage({ content: null, type: null})
+          }, 2000)
         })
     
     }
@@ -127,6 +177,16 @@ const App = () => {
             console.log("returned status code: ", returnedStatusCode)
             setPersons(persons.filter(person => person.id !== personToRemove.id))
             //setPersons(persons.map(person => person.id !== personToRemove.id ? person : returnedPerson))
+            const notificationMessageObject = {
+              content: `Deleted ${personToRemove.name}`,
+              type: 'success',
+            }
+  
+            setNotificationMessage(notificationMessageObject)
+  
+            setTimeout(() => {
+              setNotificationMessage({ content: null, type: null})
+            }, 2000)
         })
     }
   }
@@ -138,6 +198,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter value={nameFilter} handleOnChange={handleNameFilterChange} />
       <h2>add a new</h2>
       <PersonForm 
