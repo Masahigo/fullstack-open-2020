@@ -26,9 +26,12 @@ let persons = [
     }
 ]
 
-/*app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
-})*/
+app.get('/info', (req, res) => {
+    let html = `<p>Phonebook has info for ${persons.length} people</p>`
+    const date = new Date();
+    html += `<p>${date.toDateString()} ${date.toTimeString()}</p>`
+    res.send(html);
+})
 
 app.get('/api/persons', (req, res) => {
     res.json(persons)
