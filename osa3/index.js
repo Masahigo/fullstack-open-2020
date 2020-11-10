@@ -1,7 +1,21 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json())
+app.use(morgan('tiny'))
+
+/*
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
+
+app.use(requestLogger)
+*/
 
 let persons = [
     {
@@ -77,7 +91,7 @@ const generateId = () => {
     const max = 99999
 
     let random = Math.floor(Math.random() * (max - min))
-    while(random === min) {
+    while (random === min) {
         random = Math.floor(Math.random() * (max - min))
     }
 
@@ -105,7 +119,7 @@ app.post('/api/persons', (request, response) => {
         return p.name === body.name.trim()
     })
 
-    if(duplicate) {
+    if (duplicate) {
         return response.status(400).json({
             error: 'name must be unique'
         })
@@ -121,6 +135,14 @@ app.post('/api/persons', (request, response) => {
 
     response.json(person)
 })
+
+/*
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+*/
 
 const PORT = 3001
 app.listen(PORT, () => {
