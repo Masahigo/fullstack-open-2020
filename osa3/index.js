@@ -16,7 +16,7 @@ let persons = [
     },
     {
         "name": "Dan Abramov",
-        "number": "12-43-234345",
+        "number": "",
         "id": 3
     },
     {
@@ -45,7 +45,16 @@ app.get('/api/persons/:id', (request, response) => {
     })
 
     if (person) {
-        response.json(person)
+        //response.json(person)
+        if (!person.number) {
+            // HUOM: return
+            return response.status(404).json({
+                error: 'phone number missing'
+            })
+        }
+
+        response.send(person.number)
+
     } else {
         response.status(404).end()
     }
