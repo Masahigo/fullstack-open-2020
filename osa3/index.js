@@ -90,9 +90,24 @@ app.post('/api/persons', (request, response) => {
     const body = request.body
 
     if (!body.name) {
-        // HUOM: return
         return response.status(400).json({
             error: 'name missing'
+        })
+    }
+
+    if (!body.number) {
+        return response.status(400).json({
+            error: 'phone number missing'
+        })
+    }
+
+    const duplicate = persons.find(p => {
+        return p.name === body.name.trim()
+    })
+
+    if(duplicate) {
+        return response.status(400).json({
+            error: 'name must be unique'
         })
     }
 
