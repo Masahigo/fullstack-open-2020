@@ -2,6 +2,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+app.use(express.static('build'))
 
 app.use(cors())
 
@@ -38,9 +39,11 @@ const port = 3001
 app.listen(port)
 */
 
+/*
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
 })
+*/
 
 app.get('/api/notes', (req, res) => {
     res.json(notes)
