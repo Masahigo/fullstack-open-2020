@@ -15,18 +15,6 @@ morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
 })
 
-/*
-const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-}
-
-app.use(requestLogger)
-*/
-
 let persons = [
     {
         "name": "Arto Hellas",
@@ -154,7 +142,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 */
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
