@@ -21,3 +21,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # /osa3-teoria
+osa3-teoria/mongo.js
