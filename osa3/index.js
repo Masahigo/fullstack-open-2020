@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
@@ -11,10 +12,12 @@ app.use(
     morgan(':method :url :status :res[content-length] - :response-time ms :body')
 )
 
-morgan.token('body', function (req, res) { 
+morgan.token('body', function (req, res) {
     //console.log('morgan token (req.body)', req.body)
     return JSON.stringify(req.body)
 })
+
+const Person = require('./models/person')
 
 let persons = [
     {
@@ -47,10 +50,19 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    //res.json(persons)
+    Person.find({}).then(persons => {
+        res.json(persons)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
+
+    Person.findById(request.params.id).then(person => {
+        response.json(person)
+    })
+
+    /*
     const id = Number(request.params.id)
     console.log(id)
     const person = persons.find(p => {
@@ -71,14 +83,20 @@ app.get('/api/persons/:id', (request, response) => {
     } else {
         response.status(404).end()
     }
+    */
 
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
+    
+    /*const id = Number(request.params.id)
     persons = persons.filter(p => p.id !== id)
 
-    response.status(204).end()
+    response.status(204).end()*/
+
+    response.status(400).json({
+        error: 'method not implemented.'
+    })
 })
 
 const generateId = () => {
@@ -114,6 +132,7 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
+    /*
     const duplicate = persons.find(p => {
         return p.name === body.name.trim()
     })
@@ -133,6 +152,16 @@ app.post('/api/persons', (request, response) => {
     persons = persons.concat(person)
 
     response.json(person)
+    */
+
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 /*
