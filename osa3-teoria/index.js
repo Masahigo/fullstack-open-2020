@@ -1,4 +1,5 @@
 //const http = require('http')
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -8,6 +9,10 @@ app.use(cors())
 
 app.use(express.json())
 
+const Note = require('./models/note')
+
+
+/*
 let notes = [
     {
         id: 1,
@@ -29,7 +34,6 @@ let notes = [
     }
 ]
 
-/*
 const app = http.createServer((request, response) => {
 response.writeHead(200, { 'Content-Type': 'application/json' })
 response.end(JSON.stringify(notes))
@@ -46,10 +50,19 @@ app.get('/', (req, res) => {
 */
 
 app.get('/api/notes', (req, res) => {
-    res.json(notes)
+    //res.json(notes)
+    Note.find({}).then(notes => {
+        res.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {
+
+    Note.findById(request.params.id).then(note => {
+        response.json(note)
+    })
+
+    /*
     const id = Number(request.params.id)
     console.log(id)
     const note = notes.find(note => {
@@ -62,6 +75,7 @@ app.get('/api/notes/:id', (request, response) => {
     } else {
         response.status(404).end()
     }
+    */
 
     //console.log(note)
     //response.json(note)
@@ -95,7 +109,7 @@ app.post('/api/notes', (request, response) => {
         })
     }
 
-    const note = {
+    /*const note = {
         content: body.content,
         important: body.important || false,
         date: new Date(),
@@ -105,6 +119,17 @@ app.post('/api/notes', (request, response) => {
     notes = notes.concat(note)
 
     response.json(note)
+    */
+
+    const note = new Note({
+        content: body.content,
+        important: body.important || false,
+        date: new Date(),
+    })
+
+    note.save().then(savedNote => {
+        response.json(savedNote)
+    })
 })
 
 const PORT = process.env.PORT || 3001

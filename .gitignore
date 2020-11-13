@@ -22,3 +22,5 @@ yarn-error.log*
 
 # /osa3-teoria
 osa3-teoria/mongo.js
+osa3-teoria/.env
+osa3/.env
