@@ -42,11 +42,17 @@ let persons = [
     }
 ]
 
-app.get('/info', (req, res) => {
-    let html = `<p>Phonebook has info for ${persons.length} people</p>`
-    const date = new Date();
-    html += `<p>${date.toDateString()} ${date.toTimeString()}</p>`
-    res.send(html);
+app.get('/info', (req, res, next) => {
+    Person.countDocuments({}).then(count => {
+        //console.log(count)
+        let html = `<p>Phonebook has info for ${count} people</p>`
+        const date = new Date();
+        html += `<p>${date.toDateString()} ${date.toTimeString()}</p>`
+        res.send(html);
+    })
+    .catch(error => next(error))
+    //let html = `<p>Phonebook has info for ${persons.length} people</p>`
+    
 })
 
 app.get('/api/persons', (req, res, next) => {
@@ -54,7 +60,7 @@ app.get('/api/persons', (req, res, next) => {
     Person.find({}).then(persons => {
         res.json(persons)
     })
-        .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
