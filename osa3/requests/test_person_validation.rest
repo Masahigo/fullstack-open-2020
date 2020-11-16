@@ -1,0 +1,21 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "",
+    "number": ""
+}
+
+###
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "New person created via VSCode REST extension.",
+    "number": "1800-555-777"
+}
+
+###
+
+http://localhost:3001/api/persons/1
