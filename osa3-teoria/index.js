@@ -56,11 +56,12 @@ app.get('/', (req, res) => {
 })
 */
 
-app.get('/api/notes', (req, res) => {
+app.get('/api/notes', (req, res, next) => {
     //res.json(notes)
     Note.find({}).then(notes => {
         res.json(notes.map(note => note.toJSON()))
     })
+        .catch(error => next(error))
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
@@ -156,8 +157,8 @@ app.post('/api/notes', (request, response, next) => {
     note.save()
         .then(savedNote => savedNote.toJSON())
         .then(savedAndFormattedNote => {
-        response.json(savedAndFormattedNote)
-    })
+            response.json(savedAndFormattedNote)
+        })
         .catch(error => next(error))
 })
 
