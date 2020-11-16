@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 app.get('/api/notes', (req, res) => {
     //res.json(notes)
     Note.find({}).then(notes => {
-        res.json(notes)
+        res.json(notes.map(note => note.toJSON()))
     })
 })
 
@@ -69,7 +69,7 @@ app.get('/api/notes/:id', (request, response, next) => {
     Note.findById(request.params.id).then(note => {
         //response.json(note)
         if (note) {
-            response.json(note)
+            response.json(note.toJSON())
         } else {
             response.status(404).end()
         }
@@ -153,10 +153,12 @@ app.post('/api/notes', (request, response, next) => {
         date: new Date(),
     })
 
-    note.save().then(savedNote => {
-        response.json(savedNote)
+    note.save()
+        .then(savedNote => savedNote.toJSON())
+        .then(savedAndFormattedNote => {
+        response.json(savedAndFormattedNote)
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -171,7 +173,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     // by default would return the document as it was before update was applied
     Note.findByIdAndUpdate(request.params.id, note, { new: true })
         .then(updatedNote => {
-            response.json(updatedNote)
+            response.json(updatedNote.toJSON())
         })
         .catch(error => next(error))
 })
@@ -188,6 +190,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
