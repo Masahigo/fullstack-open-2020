@@ -80,7 +80,7 @@ const App = () => {
       .catch(error => {
 
         const notificationMessageObject = {
-          content: `Could not connect to server (db.json)`,
+          content: `Could not connect to server (MongoDB)`,
           type: 'error',
         }
 
