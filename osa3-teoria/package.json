@@ -10,7 +10,8 @@
     "build:ui": "rm -rf build && cd frontend && npm run build --prod && cp -r build ../",
     "deploy": "cd .. && git subtree push --prefix osa3-teoria/ heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "author": "Masi Malmi",
   "license": "MIT",
@@ -21,6 +22,12 @@
     "mongoose": "^5.10.13"
   },
   "devDependencies": {
+    "eslint": "^7.13.0",
+    "eslint-config-standard": "^16.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.21.5",
     "nodemon": "^2.0.6"
   }
 }
