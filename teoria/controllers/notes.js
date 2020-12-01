@@ -1,6 +1,10 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
+// try catch magic
+// next removed from params also
+// https://github.com/davidbanham/express-async-errors
+
 /*
 let notes = [
     {
@@ -38,34 +42,28 @@ app.get('/', (req, res) => {
 })
 */
 
-notesRouter.get('/', async (req, res, next) => {
+notesRouter.get('/', async (req, res) => {
   //res.json(notes)
   /*Note.find({}).then(notes => {
     res.json(notes.map(note => note.toJSON()))
   })
     .catch(error => next(error))*/
   
-  try {
-    const notes = await Note.find({})
-    res.json(notes.map(note => note.toJSON()))
-  }
-  catch(error){
-    next(error)
-  } 
+  const notes = await Note.find({})
+  res.json(notes.map(note => note.toJSON()))
+
   
 })
 
-notesRouter.get('/:id', async (request, response, next) => {
-  try {
-    const note = await Note.findById(request.params.id)
-    if (note) {
-      response.json(note.toJSON())
-    } else {
-      response.status(404).end()
-    }
-  } catch (error) {
-    next(error)
+notesRouter.get('/:id', async (request, response) => {
+
+  const note = await Note.findById(request.params.id)
+  if (note) {
+    response.json(note.toJSON())
+  } else {
+    response.status(404).end()
   }
+
   
   /*
   // https://mongoosejs.com/docs/api.html#model_Model.findById
@@ -103,13 +101,11 @@ notesRouter.get('/:id', async (request, response, next) => {
   //response.json(note)
 })
 
-notesRouter.delete('/:id', async (request, response, next) => {
-  try {
-    await Note.findByIdAndRemove(request.params.id)
-    response.status(204).end()
-  } catch (error) {
-    next(error)
-  }
+notesRouter.delete('/:id', async (request, response) => {
+
+  await Note.findByIdAndRemove(request.params.id)
+  response.status(204).end()
+ 
 
   /*const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
@@ -135,7 +131,7 @@ const generateId = () => {
 }
 */
 
-notesRouter.post('/', async (request, response, next) => {
+notesRouter.post('/', async (request, response) => {
   //logger.info(request.headers)
   //const note = request.body
   //logger.info(note)
@@ -155,12 +151,10 @@ notesRouter.post('/', async (request, response, next) => {
     date: new Date(),
   })
 
-  try {
-    const savedNote = await note.save()
-    response.json(savedNote.toJSON())
-  } catch (error) {
-    next(error)
-  }
+
+  const savedNote = await note.save()
+  response.json(savedNote.toJSON())
+
   
   /* VER2
 
@@ -192,7 +186,7 @@ notesRouter.post('/', async (request, response, next) => {
     */
 })
 
-notesRouter.put('/:id', async (request, response, next) => {
+notesRouter.put('/:id', async (request, response) => {
   const body = request.body
 
   const note = {
@@ -200,12 +194,10 @@ notesRouter.put('/:id', async (request, response, next) => {
     important: body.important,
   }
 
-  try {
-    const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true })
-    response.json(updatedNote.toJSON())
-  } catch (error) {
-    next(error)
-  }
+ 
+  const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true })
+  response.json(updatedNote.toJSON())
+
 
   /* VER 1
   // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
