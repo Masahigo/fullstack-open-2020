@@ -135,7 +135,7 @@ const generateId = () => {
 }
 */
 
-notesRouter.post('/', (request, response, next) => {
+notesRouter.post('/', async (request, response, next) => {
   //logger.info(request.headers)
   //const note = request.body
   //logger.info(note)
@@ -149,17 +149,20 @@ notesRouter.post('/', (request, response, next) => {
     })
   }
 
-  /*const note = {
-        content: body.content,
-        important: body.important || false,
-        date: new Date(),
-        id: generateId(),
-    }
+  const note = new Note({
+    content: body.content,
+    important: body.important === undefined ? false : body.important,
+    date: new Date(),
+  })
 
-    notes = notes.concat(note)
-
-    response.json(note)
-    */
+  try {
+    const savedNote = await note.save()
+    response.json(savedNote.toJSON())
+  } catch (error) {
+    next(error)
+  }
+  
+  /* VER2
 
   const note = new Note({
     content: body.content,
@@ -172,10 +175,24 @@ notesRouter.post('/', (request, response, next) => {
     .then(savedAndFormattedNote => {
       response.json(savedAndFormattedNote)
     })
-    .catch(error => next(error))
+    .catch(error => next(error)) */
+
+
+  /* VER 1
+    const note = {
+        content: body.content,
+        important: body.important || false,
+        date: new Date(),
+        id: generateId(),
+    }
+
+    notes = notes.concat(note)
+
+    response.json(note)
+    */
 })
 
-notesRouter.put('/:id', (request, response, next) => {
+notesRouter.put('/:id', async (request, response, next) => {
   const body = request.body
 
   const note = {
@@ -183,13 +200,21 @@ notesRouter.put('/:id', (request, response, next) => {
     important: body.important,
   }
 
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    response.json(updatedNote.toJSON())
+  } catch (error) {
+    next(error)
+  }
+
+  /* VER 1
   // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
   // by default would return the document as it was before update was applied
   Note.findByIdAndUpdate(request.params.id, note, { new: true })
     .then(updatedNote => {
       response.json(updatedNote.toJSON())
     })
-    .catch(error => next(error))
+    .catch(error => next(error))*/
 })
 
 module.exports = notesRouter
