@@ -38,16 +38,36 @@ app.get('/', (req, res) => {
 })
 */
 
-notesRouter.get('/', (req, res, next) => {
+notesRouter.get('/', async (req, res, next) => {
   //res.json(notes)
-  Note.find({}).then(notes => {
+  /*Note.find({}).then(notes => {
     res.json(notes.map(note => note.toJSON()))
   })
-    .catch(error => next(error))
+    .catch(error => next(error))*/
+  
+  try {
+    const notes = await Note.find({})
+    res.json(notes.map(note => note.toJSON()))
+  }
+  catch(error){
+    next(error)
+  } 
+  
 })
 
-notesRouter.get('/:id', (request, response, next) => {
-
+notesRouter.get('/:id', async (request, response, next) => {
+  try {
+    const note = await Note.findById(request.params.id)
+    if (note) {
+      response.json(note.toJSON())
+    } else {
+      response.status(404).end()
+    }
+  } catch (error) {
+    next(error)
+  }
+  
+  /*
   // https://mongoosejs.com/docs/api.html#model_Model.findById
   Note.findById(request.params.id).then(note => {
     //response.json(note)
@@ -62,6 +82,7 @@ notesRouter.get('/:id', (request, response, next) => {
       //response.status(400).send({ error: 'malformatted id' })
       next(error)
     })
+  */
 
   /*
     const id = Number(request.params.id)
@@ -82,19 +103,27 @@ notesRouter.get('/:id', (request, response, next) => {
   //response.json(note)
 })
 
-notesRouter.delete('/:id', (request, response, next) => {
+notesRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Note.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+
   /*const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
 
     response.status(204).end()*/
 
-  // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove
+  /*
+    // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove
   Note.findByIdAndRemove(request.params.id)
     .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
-
+    */
 })
 
 /*
