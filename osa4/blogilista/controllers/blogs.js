@@ -13,7 +13,7 @@ blogsRouter.post('/', async (request, response, next) => {
 
   const body = request.body
 
-  if (!body.title && !body.url) {
+  if (!body.title || !body.url) {
     // HUOM: return
     return response.status(400).json({
       error: 'title and url are mandatory properties'

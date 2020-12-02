@@ -89,7 +89,7 @@ describe('Blog API tests', () => {
             .expect('Content-Type', /application\/json/)
     })
 
-    describe('deletion of a note', () => {
+    describe('deletion of a blog', () => {
 
         test('succeeds with status code 204 if id is valid', async () => {
             const blogsAtStart = await helper.blogsInDb()
