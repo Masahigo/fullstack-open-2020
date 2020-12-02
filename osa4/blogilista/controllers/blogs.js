@@ -10,7 +10,17 @@ blogsRouter.get('/', (request, response) => {
   })
   
   blogsRouter.post('/', async (request, response, next) => {
-    const blog = new Blog(request.body)
+    
+    const body = request.body
+
+    if (!body.title && !body.url) {
+      // HUOM: return
+      return response.status(400).json({
+        error: 'title and url are mandatory properties'
+      })
+    }
+    
+    const blog = new Blog(body)
     
     try {
       const result = await blog.save()

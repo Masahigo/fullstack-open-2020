@@ -77,6 +77,18 @@ describe('Blog API tests', () => {
         expect(lastBlog.likes).toBe(0)
     })
 
+    test('a blog cannot be added without title and url fields (bad request)', async () => {
+        const newBlog = {
+            author: 'John Doe'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
+
 });
 
 afterAll(() => {
