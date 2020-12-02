@@ -57,6 +57,26 @@ describe('Blog API tests', () => {
         )
     })
 
+    test('a blog can be added without likes property', async () => {
+        const newBlog = {
+            title: 'The best posts about DevOps',
+            author: 'Polar Squad',
+            url: 'https://polarsquad.com/blog',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        const lastBlog = [...blogsAtEnd].pop()
+
+        expect(lastBlog.likes).toBe(0)
+    })
+
 });
 
 afterAll(() => {
