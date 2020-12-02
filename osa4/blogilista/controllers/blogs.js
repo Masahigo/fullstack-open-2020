@@ -40,6 +40,27 @@ blogsRouter.delete('/:id', async (request, response) => {
     next(error)
   }
 
+  blogsRouter.put('/:id', async (request, response) => {
+    const body = request.body
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      id: body.id
+    }
+
+    try {
+      // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
+      const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+      response.json(updatedBlog.toJSON())
+    } catch (error) {
+      next(error)
+    }
+
+  })
+
 })
 
 module.exports = blogsRouter

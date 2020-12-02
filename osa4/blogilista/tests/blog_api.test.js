@@ -112,6 +112,27 @@ describe('Blog API tests', () => {
 
     })
 
+    describe('updating a blog', () => {
+
+        test('a specific blog can be updated', async () => {
+          const blogsAtStart = await helper.blogsInDb()
+          const blogToUpdate = blogsAtStart[0]
+    
+          blogToUpdate.title = 'React patterns - need to look into those.'
+          blogToUpdate.likes = 8
+    
+          const resultBlog = await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(blogToUpdate)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    
+          const processedBlogToUpdate = JSON.parse(JSON.stringify(blogToUpdate))
+          expect(resultBlog.body).toEqual(processedBlogToUpdate)
+        })
+    
+      })
+
 });
 
 afterAll(() => {
