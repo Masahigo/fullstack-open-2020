@@ -89,6 +89,29 @@ describe('Blog API tests', () => {
             .expect('Content-Type', /application\/json/)
     })
 
+    describe('deletion of a note', () => {
+
+        test('succeeds with status code 204 if id is valid', async () => {
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
+
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
+
+            const blogsAtEnd = await helper.blogsInDb()
+
+            expect(blogsAtEnd).toHaveLength(
+                helper.initialBlogs.length - 1
+            )
+
+            const ids = blogsAtEnd.map(b => b.id)
+
+            expect(ids).not.toContain(blogToDelete.id)
+        })
+
+    })
+
 });
 
 afterAll(() => {
