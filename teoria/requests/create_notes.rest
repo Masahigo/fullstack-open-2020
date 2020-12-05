@@ -1,0 +1,19 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "VS Code REST client is pretty handy also.",
+    "important": false,
+    "userId": "5fcba8fb57d24609553c1d1b"
+}
+
+###
+
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "This stuff is actuall working!",
+    "important": true,
+    "userId": "5fcba8fb57d24609553c1d1b"
+}
