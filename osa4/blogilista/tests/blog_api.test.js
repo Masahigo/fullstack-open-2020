@@ -20,6 +20,7 @@ beforeEach(async () => {
     const user = new User({ username: 'testblogger', name: 'Test Blogger', passwordHash })
 
     await user.save()
+    auth.userid = user._id
 
     const response = await api
         .post("/api/login")
@@ -142,25 +143,85 @@ describe('Blog API tests', () => {
 
     describe('deletion of a blog', () => {
 
-        test('succeeds with status code 204 if id is valid', async () => {
+        test('fails with status code 401 (unauthorized) if trying operation without token', async () => {
             const blogsAtStart = await helper.blogsInDb()
             const blogToDelete = blogsAtStart[0]
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
-                .expect(204)
+                .expect(401)
 
             const blogsAtEnd = await helper.blogsInDb()
-
-            expect(blogsAtEnd).toHaveLength(
-                helper.initialBlogs.length - 1
-            )
-
-            const ids = blogsAtEnd.map(b => b.id)
-
-            expect(ids).not.toContain(blogToDelete.id)
+            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
         })
 
+        test('fails with status code 401 (unauthorized) if trying operation with token but wrong user id', async () => {
+  
+            const passwordHash = await bcrypt.hash('supersecretpwd', 10)
+            const newUser = new User({ username: 'anotheruser', name: 'Another User', passwordHash })
+            await newUser.save()
+
+            const response = await api
+            .post("/api/login")
+            .send({
+                username: "anotheruser",
+                password: "supersecretpwd"
+            })
+            
+            const newBlog = {
+                "title": "Some new blog",
+                "author": "Some guy or gal",
+                "url": "https://someblog.com/",
+                "likes": 5,
+                "userId": auth.userId
+            }
+
+            const blogToDelete = await api
+                .post('/api/blogs')
+                .set("authorization", 'Bearer ' + auth.token)
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+
+
+            await api
+                .delete(`/api/blogs/${blogToDelete.body.id}`)
+                .set("authorization", 'Bearer ' + response.body.token)
+                .expect(401)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            const ids = blogsAtEnd.map(b => b.id)
+        
+            expect(ids).toContain(blogToDelete.body.id)
+        })
+
+        test('succeeds with status code 204 if created by same user whos id is in token', async () => {
+
+            const newBlog = {
+                "title": "Some new blog",
+                "author": "Some guy or gal",
+                "url": "https://someblog.com/",
+                "likes": 5,
+                "userId": auth.userId
+            }
+        
+            const blogToDelete = await api
+                .post('/api/blogs')
+                .set("authorization", 'Bearer ' + auth.token)
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+        
+            await api
+                .delete(`/api/blogs/${blogToDelete.body.id}`)
+                .set("authorization", 'Bearer ' + auth.token)
+                .expect(204)
+        
+            const blogsAtEnd = await helper.blogsInDb()
+            const ids = blogsAtEnd.map(b => b.id)
+        
+            expect(ids).not.toContain(blogToDelete.id)
+        })
     })
 
     describe('updating a blog', () => {

@@ -17,3 +17,14 @@ Content-Type: application/json
     "name": "Masahigo",
     "password": "supersalainen"
 }
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "testblogger",
+    "name": "Test Blogger",
+    "password": "secretpwd"
+}
