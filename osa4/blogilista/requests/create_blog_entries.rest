@@ -21,3 +21,15 @@ Content-Type: application/json
     "likes": 1000,
     "userId": "5fcce4c0e5d35a1cb9f7ae85"
 }
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "False blog",
+    "author": "John Doe",
+    "url": "http://falseblogs.com",
+    "userId": "12345"
+}

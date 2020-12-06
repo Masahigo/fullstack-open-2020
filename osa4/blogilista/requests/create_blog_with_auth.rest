@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhpZ28iLCJpZCI6IjVmY2NlNGMwZTVkMzVhMWNiOWY3YWU4NSIsImlhdCI6MTYwNzI2NjAzOH0.U7mdW8QZFTurB-woWEGqeQk4XuAMnILcaZCrHygAir4
+
+{
+    "title": "SecureCloudBlog",
+    "author": "Joosua Santasalo",
+    "url": "https://securecloud.blog/",
+    "likes": 50,
+    "userId": "5fcce4c0e5d35a1cb9f7ae85"
+}

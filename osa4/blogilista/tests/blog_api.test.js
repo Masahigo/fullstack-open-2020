@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const auth = {};
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
@@ -18,6 +20,14 @@ beforeEach(async () => {
     const user = new User({ username: 'testblogger', name: 'Test Blogger', passwordHash })
 
     await user.save()
+
+    const response = await api
+        .post("/api/login")
+        .send({
+            username: "testblogger",
+            password: "secretpwd"
+        })
+    auth.token = response.body.token
 })
 
 describe('Blog API tests', () => {
@@ -56,6 +66,7 @@ describe('Blog API tests', () => {
 
         await api
             .post('/api/blogs')
+            .set("authorization", 'Bearer ' + auth.token)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -82,6 +93,7 @@ describe('Blog API tests', () => {
 
         await api
             .post('/api/blogs')
+            .set("authorization", 'Bearer ' + auth.token)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -100,6 +112,7 @@ describe('Blog API tests', () => {
 
         await api
             .post('/api/blogs')
+            .set("authorization", 'Bearer ' + auth.token)
             .send(newBlog)
             .expect(400)
             .expect('Content-Type', /application\/json/)
@@ -108,7 +121,7 @@ describe('Blog API tests', () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 
-    test('a blog cannot be added without valid userid', async () => {
+    test('a blog cannot be added without valid userid (unauthorized)', async () => {
 
         const newBlog = {
             title: 'Dummy blog without valid user id.',
@@ -120,7 +133,7 @@ describe('Blog API tests', () => {
         await api
             .post('/api/blogs')
             .send(newBlog)
-            .expect(400)
+            .expect(401)
             .expect('Content-Type', /application\/json/)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -153,23 +166,23 @@ describe('Blog API tests', () => {
     describe('updating a blog', () => {
 
         test('a specific blog can be updated', async () => {
-          const blogsAtStart = await helper.blogsInDb()
-          const blogToUpdate = blogsAtStart[0]
-    
-          blogToUpdate.title = 'React patterns - need to look into those.'
-          blogToUpdate.likes = 8
-    
-          const resultBlog = await api
-            .put(`/api/blogs/${blogToUpdate.id}`)
-            .send(blogToUpdate)
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
-    
-          const processedBlogToUpdate = JSON.parse(JSON.stringify(blogToUpdate))
-          expect(resultBlog.body).toEqual(processedBlogToUpdate)
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+
+            blogToUpdate.title = 'React patterns - need to look into those.'
+            blogToUpdate.likes = 8
+
+            const resultBlog = await api
+                .put(`/api/blogs/${blogToUpdate.id}`)
+                .send(blogToUpdate)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            const processedBlogToUpdate = JSON.parse(JSON.stringify(blogToUpdate))
+            expect(resultBlog.body).toEqual(processedBlogToUpdate)
         })
-    
-      })
+
+    })
 
 });
 
