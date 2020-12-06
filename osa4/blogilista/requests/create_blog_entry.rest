@@ -1,9 +1,0 @@
-POST http://localhost:3003/api/blogs
-Content-Type: application/json
-
-{
-    "title": "Tech blog about public clouds and devops using MS stack.",
-    "author": "Masi Malmi",
-    "url": "https://msdevopsdude.com",
-    "likes": 100
-}

@@ -1,30 +1,50 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-blogsRouter.get('/', (request, response) => {
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog
+    .find({}).populate('user', { username: 1, name:1 })
+    response.json(blogs.map(blog => blog.toJSON()))
+
+  /*
   Blog
     .find({})
     .then(blogs => {
       response.json(blogs)
     })
+  */
 })
 
 blogsRouter.post('/', async (request, response, next) => {
 
   const body = request.body
+  //console.log('body.userId: ', body.userId)
 
-  if (!body.title || !body.url) {
-    // HUOM: return
-    return response.status(400).json({
-      error: 'title and url are mandatory properties'
+  try {  
+    const user = await User.findById(body.userId)
+
+    if (!body.title || !body.url) {
+      // HUOM: return
+      return response.status(400).json({
+        error: 'title and url are mandatory properties'
+      })
+    }
+
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes === undefined ? 0 : body.likes,
+      user: user._id
     })
-  }
+  
+    // HUOM: ref in users list does not work without this!
+    const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
 
-  const blog = new Blog(body)
-
-  try {
-    const result = await blog.save()
-    response.status(201).json(result)
+    response.status(201).json(savedBlog)
   } catch (error) {
     next(error)
   }

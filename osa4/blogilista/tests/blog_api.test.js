@@ -3,12 +3,21 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('secretpwd', 10)
+    const user = new User({ username: 'testblogger', name: 'Test Blogger', passwordHash })
+
+    await user.save()
 })
 
 describe('Blog API tests', () => {
@@ -34,11 +43,15 @@ describe('Blog API tests', () => {
     })
 
     test('a valid blog can be added', async () => {
+        const usersAtStart = await helper.usersInDb()
+        //console.log('first user in db:', usersAtStart[0])
+
         const newBlog = {
             title: 'Tech blog about public clouds and devops using MS stack.',
             author: 'Masi Malmi',
             url: 'https://msdevopsdude.com',
-            likes: 1000
+            likes: 1000,
+            userId: usersAtStart[0].id
         }
 
         await api
@@ -58,10 +71,13 @@ describe('Blog API tests', () => {
     })
 
     test('a blog can be added without likes property', async () => {
+        const usersAtStart = await helper.usersInDb()
+
         const newBlog = {
             title: 'The best posts about DevOps',
             author: 'Polar Squad',
             url: 'https://polarsquad.com/blog',
+            userId: usersAtStart[0].id,
         }
 
         await api
@@ -87,6 +103,28 @@ describe('Blog API tests', () => {
             .send(newBlog)
             .expect(400)
             .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
+    test('a blog cannot be added without valid userid', async () => {
+
+        const newBlog = {
+            title: 'Dummy blog without valid user id.',
+            author: 'John Doe',
+            url: 'https://dummyblog.com',
+            userId: '12345'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 
     describe('deletion of a blog', () => {
