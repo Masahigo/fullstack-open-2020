@@ -50,7 +50,8 @@ notesRouter.get('/', async (req, res) => {
   })
     .catch(error => next(error))*/
   
-  const notes = await Note.find({})
+  const notes = await Note
+    .find({}).populate('user', { username: 1, name:1 })
   res.json(notes.map(note => note.toJSON()))
 
   
