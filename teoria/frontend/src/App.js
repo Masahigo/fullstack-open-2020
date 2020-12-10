@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
+import Notification from './components/Notification'
 import noteService from './services/notes'
+import loginService from './services/login' 
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
-  
+  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     //console.log('effect')
@@ -18,7 +21,16 @@ const App = () => {
       setNotes(initialNotes)
     })
   }, [])
-  console.log('render', notes.length, 'notes')
+  //console.log('render', notes.length, 'notes')
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
+  }, [])
 
   const addNote = (event) => {
     event.preventDefault()
@@ -59,22 +71,45 @@ const App = () => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already deleted from server`
+        //alert(
+        //  `the note '${note.content}' was already deleted from server`
+        //)
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+
         setNotes(notes.filter(n => n.id !== id))
       })
     }
 
-    const handleLogin = (event) => {
+    const handleLogin = async (event) => {
       event.preventDefault()
-      console.log('logging in with', username, password)
+      //console.log('logging in with', username, password)
+      try {
+        const user = await loginService.login({
+          username, password,
+        })
+        //console.log('user: ', user)
+        window.localStorage.setItem(
+          'loggedNoteappUser', JSON.stringify(user)
+        ) 
+        noteService.setToken(user.token)
+        setUser(user)
+        setUsername('')
+        setPassword('')
+      } catch (exception) {
+        setErrorMessage('wrong credentials')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
     }
-  
-    return (
-      <div>
-        <h1>Notes</h1>
 
+    const loginForm = () => (
+      <>
         <h2>Login</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -97,6 +132,31 @@ const App = () => {
           </div>
           <button type="submit">login</button>
         </form>
+      </>
+    )
+
+    const noteForm = () => (
+      <form onSubmit={addNote}>
+        <input 
+          value={newNote} 
+          onChange={handleNoteChange}
+        />
+        <button type="submit">save</button>
+      </form>
+    )
+  
+    return (
+      <div>
+        <h1>Notes</h1>
+        <Notification message={errorMessage} />
+
+        {user === null ?
+          loginForm() :
+          <div>
+            <p>{user.name} logged in</p>
+            {noteForm()}
+          </div>
+        }
 
         <div>
           <button onClick={() => setShowAll(!showAll)}>
@@ -111,13 +171,7 @@ const App = () => {
               toggleImportance={() => toggleImportanceOf(note.id)} />
           )}
         </ul>
-        <form onSubmit={addNote}>
-          <input 
-            value={newNote} 
-            onChange={handleNoteChange}
-          />
-          <button type="submit">save</button>
-        </form>   
+       
       </div>
     )
   
