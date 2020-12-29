@@ -10,7 +10,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -86,7 +85,7 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -95,7 +94,7 @@ const App = () => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
@@ -109,7 +108,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="new blog" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} userId={user.id} />
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
@@ -134,10 +133,10 @@ const App = () => {
       { blogForm()}
       <br />
       {blogsSortedByLikes.map(blog =>
-        <Blog 
-          key={blog.id} 
+        <Blog
+          key={blog.id}
           blog={blog}
-          addLike={() => addLike(blog.id)} 
+          addLike={() => addLike(blog.id)}
         />
       )}
     </div>
