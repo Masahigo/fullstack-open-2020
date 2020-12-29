@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, addLike }) => {
   const [detailView, setDetailView] = useState(false)
 
   const hideWhenDetailView = { display: detailView ? 'none' : '' }
@@ -8,10 +8,6 @@ const Blog = ({ blog }) => {
 
   const toggleDetailView = () => {
     setDetailView(!detailView)
-  }
-
-  const addLike = (event) => {
-    event.preventDefault()
   }
 
   const blogStyle = {

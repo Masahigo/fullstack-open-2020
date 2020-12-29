@@ -65,6 +65,21 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
+  const addLike = id => {
+    //console.log(`add like for ${id}`)
+    const blog = blogs.find(b => b.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
+
+    blogService
+      .update(id, changedBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+
   const loginForm = () => (
     <>
       <h2>Log in to application</h2>
@@ -117,7 +132,11 @@ const App = () => {
       { blogForm()}
       <br />
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog 
+          key={blog.id} 
+          blog={blog}
+          addLike={() => addLike(blog.id)} 
+        />
       )}
     </div>
   )
