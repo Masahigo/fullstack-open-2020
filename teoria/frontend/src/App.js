@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import NoteForm from './components/NoteForm'
+import Togglable from './components/Togglable'
 import noteService from './services/notes'
 import loginService from './services/login'
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
+  //const [loginVisible, setLoginVisible] = useState(false)
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
@@ -140,6 +142,7 @@ const App = () => {
   */
 
   const loginForm = () => {
+    /*
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
     const showWhenVisible = { display: loginVisible ? '' : 'none' }
 
@@ -159,17 +162,35 @@ const App = () => {
           <button onClick={() => setLoginVisible(false)}>cancel</button>
         </div>
       </div>
+      */
+    return (
+      <Togglable buttonLabel='login'>
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
     )
   }
 
   const noteForm = () => (
-    <form onSubmit={addNote}>
+    /*<form onSubmit={addNote}>
       <input
         value={newNote}
         onChange={handleNoteChange}
       />
       <button type="submit">save</button>
-    </form>
+    </form>*/
+    <Togglable buttonLabel="new note">
+      <NoteForm
+        onSubmit={addNote}
+        value={newNote}
+        handleChange={handleNoteChange}
+      />
+    </Togglable>
   )
 
   return (
@@ -182,6 +203,7 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           {noteForm()}
+
         </div>
       }
 
