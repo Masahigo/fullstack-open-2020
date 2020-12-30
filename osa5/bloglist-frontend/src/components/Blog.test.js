@@ -55,3 +55,24 @@ test('renders all details of a blog after view button clicked', () => {
         'likes 1000'
     )
 })
+
+test('clicking the button twice calls event handler twice', async () => {
+    const blog = {
+        title: 'The best posts about DevOps',
+        author: 'Polar Squad',
+        url: 'https://polarsquad.com/blog',
+        likes: 1000
+    }
+  
+    const mockHandler = jest.fn()
+  
+    const component = render(
+      <Blog blog={blog} addLike={mockHandler} />
+    )
+  
+    const button = component.getByText('like')
+    fireEvent.click(button)
+    fireEvent.click(button)
+  
+    expect(mockHandler.mock.calls).toHaveLength(2)
+  })
