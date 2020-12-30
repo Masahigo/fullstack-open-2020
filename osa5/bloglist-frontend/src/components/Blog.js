@@ -21,11 +21,11 @@ const Blog = ({ blog, addLike }) => {
 
   return (
     <div style={blogStyle}>
-      <div style={hideWhenDetailView}>
+      <div style={hideWhenDetailView} className='list-view'>
         {blog.title} &nbsp;
         <button onClick={toggleDetailView}>view</button>
       </div>
-      <div style={showWhenDetailView}>
+      <div style={showWhenDetailView} className='detail-view'>
         {blog.title} &nbsp;
         <button onClick={toggleDetailView}>hide</button><br />
         {blog.url}<br />
