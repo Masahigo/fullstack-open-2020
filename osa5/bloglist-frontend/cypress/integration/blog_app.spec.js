@@ -38,12 +38,11 @@ describe('Blog app', function() {
         })
     })
 
-    describe.only('When logged in', function() {
+    describe('When logged in', function() {
         beforeEach(function() {
             cy.get('#username').type('higo')
             cy.get('#password').type('supersalainen')
             cy.get('#login-button').click()
-            //cy.login({ username: 'higo', password: 'supersalainen' })
         })
     
         it('A blog can be created', function() {
@@ -73,7 +72,7 @@ describe('Blog app', function() {
             })
           })
 
-          describe('When new blog is created', function () {
+          describe('and a blog is created', function () {
             beforeEach(function () {
                 cy.contains('new blog').click()
                 cy.get('#title').type('Blog post to be deleted')
@@ -88,7 +87,36 @@ describe('Blog app', function() {
                 cy.get('html').should('not.contain', 'Blog post to be deleted')
             })
           })
+    })
 
+    // valuable lesson on operations done "past the UI" - only use this method or the UI only, mixing them is bad idea..
+    describe('When several blog posts are created by logged-in user', function () {
+        beforeEach(function () {
+            cy.login({ username: 'higo', password: 'supersalainen' })
+            cy.createBlog({ 
+                title: 'Tech blog about public clouds and devops using MS stack.', 
+                author: 'Masi Malmi',
+                url: 'https://msdevopsdude.com',
+                likes: 100
+            })
+            cy.createBlog({ 
+                title: 'The best posts about DevOps', 
+                author: 'Polar Squad',
+                url: 'https://polarsquad.com/blog',
+                likes: 1000
+            })
+            cy.createBlog({ 
+                title: 'Cypress Blog', 
+                author: 'The Cypress Team',
+                url: 'https://www.cypress.io/blog/',
+                likes: 500
+            })
+        })
+  
+        it('the one with most likes is ordered on top', function () {
+            cy.get('.list-view:first')
+                .should('contain', 'The best posts about DevOps')
+        })
     })
 
   })
