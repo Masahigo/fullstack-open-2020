@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, addLike }) => {
+const Blog = ({ blog, addLike, remove }) => {
   const [detailView, setDetailView] = useState(false)
 
   const hideWhenDetailView = { display: detailView ? 'none' : '' }
@@ -30,7 +30,8 @@ const Blog = ({ blog, addLike }) => {
         <button onClick={toggleDetailView}>hide</button><br />
         {blog.url}<br />
         likes {blog.likes}&nbsp; <button onClick={addLike} className='like-button'>like</button><br />
-        {blog.author}
+        {blog.author}<br />
+        <button onClick={remove} className='remove-button'>remove</button>
       </div>
 
     </div>

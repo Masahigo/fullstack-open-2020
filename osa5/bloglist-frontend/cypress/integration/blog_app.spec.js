@@ -73,6 +73,22 @@ describe('Blog app', function() {
             })
           })
 
+          describe('When new blog is created', function () {
+            beforeEach(function () {
+                cy.contains('new blog').click()
+                cy.get('#title').type('Blog post to be deleted')
+                cy.get('#author').type('John Doe')
+                cy.get('#url').type('https://test.com/blog')
+                cy.get('#create-button').click()
+            })
+      
+            it('it can be deleted', function () {
+                cy.get('.list-view').find('button').click()
+                cy.get('.detail-view').find('.remove-button').click()
+                cy.get('html').should('not.contain', 'Blog post to be deleted')
+            })
+          })
+
     })
 
   })

@@ -79,6 +79,19 @@ const App = () => {
       })
   }
 
+  const remove = id => {
+    const blogToRemove = blogs.find(b => b.id === id)
+
+    blogService
+      .remove(blogToRemove.id)
+      .then(response => {
+        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+
   const loginForm = () => (
     <>
       <h2>Log in to application</h2>
@@ -139,6 +152,7 @@ const App = () => {
           key={blog.id}
           blog={blog}
           addLike={() => addLike(blog.id)}
+          remove={() => remove(blog.id)}
         />
       )}
     </div>
