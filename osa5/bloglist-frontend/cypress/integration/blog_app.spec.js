@@ -55,6 +55,24 @@ describe('Blog app', function() {
 
             cy.contains('Cypress Blog')
         })
+
+        describe('and a blog exists', function () {
+            beforeEach(function () {
+                cy.contains('new blog').click()
+                cy.get('#title').type('The best posts about DevOps')
+                cy.get('#author').type('Polar Squad')
+                cy.get('#url').type('https://polarsquad.com/blog')
+                cy.get('#create-button').click()
+            })
+      
+            it('it can be liked', function () {
+              cy.get('.list-view').find('button').click()
+              cy.get('.detail-view').find('.like-button').click()
+
+              cy.contains('likes 1')
+            })
+          })
+
     })
 
   })
