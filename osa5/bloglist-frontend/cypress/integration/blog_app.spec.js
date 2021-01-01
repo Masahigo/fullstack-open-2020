@@ -36,6 +36,25 @@ describe('Blog app', function() {
 
             cy.get('html').should('not.contain', 'Masahigo logged in')
         })
-    }
-    )
+    })
+
+    describe.only('When logged in', function() {
+        beforeEach(function() {
+            cy.get('#username').type('higo')
+            cy.get('#password').type('supersalainen')
+            cy.get('#login-button').click()
+            //cy.login({ username: 'higo', password: 'supersalainen' })
+        })
+    
+        it('A blog can be created', function() {
+            cy.contains('new blog').click()
+            cy.get('#title').type('Cypress Blog')
+            cy.get('#author').type('The Cypress Team')
+            cy.get('#url').type('https://www.cypress.io/blog/')
+            cy.get('#create-button').click()
+
+            cy.contains('Cypress Blog')
+        })
+    })
+
   })
