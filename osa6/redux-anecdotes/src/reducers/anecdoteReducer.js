@@ -5,7 +5,7 @@
   'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
   'Premature optimization is the root of all evil.',
   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]*/
+]
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
@@ -17,7 +17,7 @@ const asObject = (anecdote) => {
   }
 }
 
-//const initialState = anecdotesAtStart.map(asObject)
+const initialState = anecdotesAtStart.map(asObject)*/
 
 const anecdoteReducer = (state = [], action) => {
   //console.log('state now: ', state)
@@ -57,14 +57,10 @@ export const addVote = (id) => {
   }
 }
 
-export const createAnecdote = (content) => {
+export const createAnecdote = (data) => {
   return {
     type: 'NEW_ANECDOTE',
-    data: {
-      content,
-      votes: 0,
-      id: getId()
-    }
+    data,
   }
 }
 
