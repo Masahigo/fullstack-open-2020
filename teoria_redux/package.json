@@ -15,6 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "NODE_ENV=development react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -38,6 +39,7 @@
     ]
   },
   "devDependencies": {
-    "deep-freeze": "^0.0.1"
+    "deep-freeze": "^0.0.1",
+    "redux-devtools-extension": "^2.13.8"
   }
 }
