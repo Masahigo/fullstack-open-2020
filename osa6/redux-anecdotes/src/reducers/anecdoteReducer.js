@@ -55,10 +55,15 @@ export const initializeAnecdotes = () => {
   }
 }
 
-export const addVote = (id) => {
-  return {
-    type: 'ADD_VOTE',
-    data: { id }
+export const addVote = (anecdote) => {
+  return async dispatch => {
+    const changedAnecdote = await anecdoteService.update(anecdote)
+    dispatch ({
+      type: 'ADD_VOTE',
+      data: { 
+        id: changedAnecdote.id 
+      }
+    })
   }
 }
 
