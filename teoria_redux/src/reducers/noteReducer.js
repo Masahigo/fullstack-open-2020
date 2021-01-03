@@ -1,3 +1,5 @@
+import noteService from '../services/notes'
+
 /*const initialState = [
   {
     content: 'reducer defines how redux store works',
@@ -37,14 +39,16 @@ const noteReducer = (state = [], action) => {
 //const generateId = () =>
 //  Number((Math.random() * 1000000).toFixed(0))
 
-export const initializeNotes = (notes) => {
-  return {
-    type: 'INIT_NOTES',
-    data: notes,
-  }
-}
+// VER 1
+//export const initializeNotes = (notes) => {
+//  return {
+//    type: 'INIT_NOTES',
+//    data: notes,
+//  }
+//}
 
-/*export const createNote = (content) => {
+/* VER 1
+  export const createNote = (content) => {
   return {
     type: 'NEW_NOTE',
     data: {
@@ -55,10 +59,21 @@ export const initializeNotes = (notes) => {
   }
 }*/
 
-export const createNote = (data) => {
+/* VER 2
+  export const createNote = (data) => {
   return {
     type: 'NEW_NOTE',
     data,
+  }
+}*/
+
+export const createNote = content => {
+  return async dispatch => {
+    const newNote = await noteService.createNew(content)
+    dispatch({
+      type: 'NEW_NOTE',
+      data: newNote,
+    })
   }
 }
 
@@ -66,6 +81,16 @@ export const toggleImportanceOf = (id) => {
   return {
     type: 'TOGGLE_IMPORTANCE',
     data: { id }
+  }
+}
+
+export const initializeNotes = () => {
+  return async dispatch => {
+    const notes = await noteService.getAll()
+    dispatch({
+      type: 'INIT_NOTES',
+      data: notes,
+    })
   }
 }
 
