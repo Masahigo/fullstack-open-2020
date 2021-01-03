@@ -32,7 +32,7 @@
     },
     {
       "content": "One more for the day..",
-      "votes": 0,
+      "votes": 1,
       "id": "IZOSUq2"
     },
     {
@@ -44,6 +44,11 @@
       "content": "One more using thunk",
       "votes": 0,
       "id": "Z70v0Cc"
+    },
+    {
+      "content": "Last test of the day",
+      "votes": 0,
+      "id": "dEYKaTo"
     }
   ]
 }
