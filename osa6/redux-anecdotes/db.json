@@ -39,6 +39,11 @@
       "content": "Another one to save to backend",
       "votes": 0,
       "id": "8KztaFq"
+    },
+    {
+      "content": "One more using thunk",
+      "votes": 0,
+      "id": "Z70v0Cc"
     }
   ]
 }
