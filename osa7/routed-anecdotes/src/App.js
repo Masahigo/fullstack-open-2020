@@ -98,21 +98,26 @@ const CreateNew = (props) => {
     info.reset()
   }
 
+  const trimResetField = (props) => {
+    const { reset, ...trimmedInput } = props;
+    return trimmedInput;
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...trimResetField(content)} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...trimResetField(author)} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...trimResetField(info)} />
         </div>
         <button>create</button>
       </form>
