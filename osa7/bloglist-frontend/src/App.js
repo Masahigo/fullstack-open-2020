@@ -1,44 +1,55 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { setNotification } from './reducers/notificationReducer'
+import { createBlog, initializeBlogs } from './reducers/blogReducer'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  //const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
 
-  useEffect(() => {
+  /*useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
-  }, [])
+  }, [])*/
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      // token was not persisting so enforce from here..
+      blogService.setToken(user.token)
     }
   }, [])
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
+    dispatch(createBlog(blogObject))
+    dispatch(setNotification(`New blog '${blogObject.title}' created`, 5))
+
+    /*blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         dispatch(setNotification(`New blog '${blogObject.title}' created`, 5))
-      })
+      })*/
   }
 
   const handleLogin = async (event) => {
@@ -77,7 +88,7 @@ const App = () => {
     blogService
       .update(id, changedBlog)
       .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        //setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
         dispatch(setNotification(`New like for '${changedBlog.title}' added`, 2))
       })
       .catch(error => {
@@ -91,7 +102,7 @@ const App = () => {
     blogService
       .remove(blogToRemove.id)
       .then(response => {
-        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+        //setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
         dispatch(setNotification(`Blog '${blogToRemove.title}' removed`, 2))
       })
       .catch(error => {
