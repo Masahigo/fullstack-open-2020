@@ -4,7 +4,7 @@ import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { setNotification } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs } from './reducers/blogReducer'
+import { createBlog, removeBlog, addBlogLike, initializeBlogs } from './reducers/blogReducer'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -43,13 +43,6 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     dispatch(createBlog(blogObject))
     dispatch(setNotification(`New blog '${blogObject.title}' created`, 5))
-
-    /*blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        dispatch(setNotification(`New blog '${blogObject.title}' created`, 5))
-      })*/
   }
 
   const handleLogin = async (event) => {
@@ -80,34 +73,14 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const addLike = id => {
-    //console.log(`add like for ${id}`)
-    const blog = blogs.find(b => b.id === id)
-    const changedBlog = { ...blog, likes: blog.likes + 1 }
-
-    blogService
-      .update(id, changedBlog)
-      .then(returnedBlog => {
-        //setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
-        dispatch(setNotification(`New like for '${changedBlog.title}' added`, 2))
-      })
-      .catch(error => {
-        console.error(error)
-      })
+  const addLike = blog => {
+    dispatch(addBlogLike(blog))
+    dispatch(setNotification(`New like for '${blog.title}' added`, 2))
   }
 
-  const remove = id => {
-    const blogToRemove = blogs.find(b => b.id === id)
-
-    blogService
-      .remove(blogToRemove.id)
-      .then(response => {
-        //setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
-        dispatch(setNotification(`Blog '${blogToRemove.title}' removed`, 2))
-      })
-      .catch(error => {
-        console.error(error)
-      })
+  const remove = blog => {
+    dispatch(removeBlog(blog.id))
+    dispatch(setNotification(`Blog '${blog.title}' removed`, 2))
   }
 
   const loginForm = () => (
@@ -170,8 +143,8 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
-          addLike={() => addLike(blog.id)}
-          remove={() => remove(blog.id)}
+          addLike={() => addLike(blog)}
+          remove={() => remove(blog)}
         />
       )}
     </div>
