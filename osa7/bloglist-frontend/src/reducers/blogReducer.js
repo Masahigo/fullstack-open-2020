@@ -1,7 +1,7 @@
 import blogService from '../services/blogs'
 
 const blogReducer = (state = [], action) => {
-  console.log('ACTION', action)
+  //console.log('ACTION', action)
   switch (action.type) {
     case 'NEW_BLOG':
       return [...state, action.data]
@@ -48,7 +48,7 @@ export const removeBlog = id => {
 
   export const addBlogLike = (blog) => {
     return async dispatch => {
-      const changedBlog = await blogService.update(blog)
+      const changedBlog = await blogService.update(blog.id, blog)
       dispatch ({
         type: 'ADD_LIKE',
         data: { 
