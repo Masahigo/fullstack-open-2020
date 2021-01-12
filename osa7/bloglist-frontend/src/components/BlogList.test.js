@@ -1,7 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
-import Blog from './Blog'
+import BlogList from './BlogList'
 
 test('renders blog\'s title in list view', () => {
     const blog = {
@@ -12,7 +12,7 @@ test('renders blog\'s title in list view', () => {
     }
 
     const component = render(
-        <Blog blog={blog} />
+        <BlogList blog={blog} />
     )
 
     const div = component.container.querySelector('.list-view')
@@ -30,7 +30,7 @@ test('renders all details of a blog after view button clicked', () => {
     }
 
     const component = render(
-        <Blog blog={blog} />
+        <BlogList blog={blog} />
     )
 
     const button = component.getByText('view')
@@ -67,7 +67,7 @@ test('clicking the button twice calls event handler twice', async () => {
     const mockHandler = jest.fn()
   
     const component = render(
-      <Blog blog={blog} addLike={mockHandler} />
+      <BlogList blog={blog} addLike={mockHandler} />
     )
   
     const button = component.getByText('like')

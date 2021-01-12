@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { setNotification } from './reducers/notificationReducer'
-import { createBlog, removeBlog, addBlogLike, initializeBlogs } from './reducers/blogReducer'
+import { createBlog, /* removeBlog, */ addBlogLike, initializeBlogs } from './reducers/blogReducer'
 import { setUser, clearUser } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
 import Togglable from './components/Togglable'
@@ -26,11 +26,16 @@ const App = () => {
   const loggedUser = useSelector(state => state.user)
   const users = useSelector(state => state.users)
 
-  console.log('users', users)
+  //console.log('users', users)
 
-  const match = useRouteMatch('/users/:id')
-  const user = match
-    ? users.find(user => user.id === match.params.id)
+  const userMatch = useRouteMatch('/users/:id')
+  const user = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+
+  const blogMatch = useRouteMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
     : null
 
   useEffect(() => {
@@ -87,10 +92,10 @@ const App = () => {
     dispatch(setNotification(`New like for '${blog.title}' added`, 2))
   }
 
-  const remove = blog => {
+  /*const remove = blog => {
     dispatch(removeBlog(blog.id))
     dispatch(setNotification(`Blog '${blog.title}' removed`, 2))
-  }
+  }*/
 
   const loginForm = () => (
     <>
@@ -175,6 +180,37 @@ const App = () => {
     )
   }
 
+  const Blog = ({ blog, addLike }) => {
+    const history = useHistory()
+
+    const backClick = () => {
+      history.push('/')
+    }
+
+    console.log("Blog", blog)
+
+    if (!blog) {
+      return null
+    }
+
+    return (
+      <div>
+        <h2>{blog.title}</h2>
+        <div key={blog.id}>
+          <p>
+            <span>{blog.url}</span><br />
+            <span>
+              {blog.likes} likes&nbsp;
+              <button onClick={addLike} className='like-button'>like</button>
+            </span><br />
+            <span>added by {blog.user.name}</span>
+          </p>
+        </div>
+        <button onClick={() => backClick()}>back</button>
+      </div>
+    )
+  }
+
   const UsersList = ({ users }) => (
     <div>
       <h2>Users</h2>
@@ -192,8 +228,6 @@ const App = () => {
     </div>
   )
 
-  //const user = null
-
   return (
     <div>
       <h2>blogs</h2>
@@ -205,19 +239,21 @@ const App = () => {
       </p>
       { blogForm()}
       <br />
-      {blogsSortedByLikes.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          addLike={() => addLike(blog)}
-          remove={() => remove(blog)}
-        />
-      )}
       <Switch>
         <Route path="/users/:id">
           <User user={user} />
         </Route>
+        <Route path="/blogs/:id">
+          <Blog blog={blog} 
+            addLike={() => addLike(blog)} />
+        </Route>
         <Route path="/">
+          {blogsSortedByLikes.map(blog =>
+          <BlogList
+              key={blog.id}
+              blog={blog}
+            />
+          )}
           <UsersList users={users} />
         </Route>
       </Switch>
