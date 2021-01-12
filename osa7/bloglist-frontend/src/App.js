@@ -10,6 +10,10 @@ import { initializeUsers } from './reducers/userReducer'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import {
+  useRouteMatch, useHistory,
+  Switch, Link, Route
+} from "react-router-dom"
 import './App.css'
 
 const App = () => {
@@ -19,8 +23,15 @@ const App = () => {
 
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
+  const loggedUser = useSelector(state => state.user)
   const users = useSelector(state => state.users)
+
+  console.log('users', users)
+
+  const match = useRouteMatch('/users/:id')
+  const user = match
+    ? users.find(user => user.id === match.params.id)
+    : null
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -116,7 +127,7 @@ const App = () => {
     </Togglable>
   )
 
-  if (user === null) {
+  if (loggedUser === null) {
     return (
       <div>
         { loginForm()}
@@ -124,16 +135,73 @@ const App = () => {
     )
   }
 
-  const blogsSortedByLikes = [...blogs].sort((a,b) => b['likes']-a['likes'])
+  const blogsSortedByLikes = [...blogs].sort((a, b) => b['likes'] - a['likes'])
+
+  const User = ({ user }) => {
+    //console.log('User', user)
+    const history = useHistory()
+
+    const backClick = () => {
+      history.push('/')
+    }
+
+    if (!user) {
+      return null
+    }
+
+    if (user.blogs.length === 0) {
+      return (
+        <div>
+          <h2>{user.name}</h2>
+          <p>No blogs added by the user.</p>
+          <button onClick={() => backClick()}>back</button>
+        </div>
+      )
+    }
+
+    return (
+      <div>
+        <h2>{user.name}</h2>
+        <h3>Added blogs</h3>
+        <ul>
+          {user.blogs.map(blog =>
+            <li key={blog.id}>
+              {blog.title}
+            </li>
+          )}
+        </ul>
+        <button onClick={() => backClick()}>back</button>
+      </div>
+    )
+  }
+
+  const UsersList = ({ users }) => (
+    <div>
+      <h2>Users</h2>
+      <table>
+        <tbody>
+          <tr><th>&nbsp;</th><th>blogs created</th></tr>
+          {users.map(user =>
+            <tr key={user.id}>
+              <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+
+  //const user = null
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.name} logged in&nbsp;
-        <button onClick={handleLogoutClick}>
+      <p>{loggedUser.name} logged in&nbsp;
+          <button onClick={handleLogoutClick}>
           logout
-        </button>
+          </button>
       </p>
       { blogForm()}
       <br />
@@ -145,19 +213,14 @@ const App = () => {
           remove={() => remove(blog)}
         />
       )}
-      <br />
-      <h2>Users</h2>
-      <table>
-          <tbody>
-          <tr><th>&nbsp;</th><th>blogs created</th></tr>
-            {users.map(user => 
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.blogs.length}</td>
-            </tr>
-            )}
-          </tbody>
-      </table>
+      <Switch>
+        <Route path="/users/:id">
+          <User user={user} />
+        </Route>
+        <Route path="/">
+          <UsersList users={users} />
+        </Route>
+      </Switch>
     </div>
   )
 }
