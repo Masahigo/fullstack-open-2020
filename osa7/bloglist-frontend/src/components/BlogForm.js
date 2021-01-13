@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import {
+  Button,
+} from '@material-ui/core'
 
 const BlogForm = ({ createBlog }) => {
 
@@ -52,7 +55,7 @@ const BlogForm = ({ createBlog }) => {
             onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
           />
         </div>
-        <button id="create-button" type="submit">create</button>
+        <Button variant="contained" color="primary" id="create-button" type="submit">create</Button>
       </form>
     </div>
   )

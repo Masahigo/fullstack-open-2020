@@ -1,4 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react'
+import {
+  Container,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Toolbar,
+  AppBar
+} from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
@@ -111,9 +124,9 @@ const App = () => {
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
             id='username'
+            label='username'
             type="text"
             value={username}
             name="Username"
@@ -121,16 +134,16 @@ const App = () => {
           />
         </div>
         <div>
-          password
-          <input
+          <TextField
             id='password'
+            label='password'
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id="login-button" type="submit">login</button>
+        <Button variant="contained" color="primary" id="login-button" type="submit">login</Button>
       </form>
     </>
   )
@@ -168,7 +181,7 @@ const App = () => {
         <div>
           <h2>{user.name}</h2>
           <p>No blogs added by the user.</p>
-          <button onClick={() => backClick()}>back</button>
+          <Button variant="contained" color="secondary" onClick={() => backClick()}>back</Button>
         </div>
       )
     }
@@ -184,7 +197,7 @@ const App = () => {
             </li>
           )}
         </ul>
-        <button onClick={() => backClick()}>back</button>
+        <Button variant="contained" color="secondary" onClick={() => backClick()}>back</Button>
       </div>
     )
   }
@@ -210,7 +223,7 @@ const App = () => {
             <span>{blog.url}</span><br />
             <span>
               {blog.likes} likes&nbsp;
-              <button onClick={addLike} className='like-button'>like</button>
+                <Button variant="contained" color="secondary" onClick={addLike} className='like-button'>like</Button>
             </span><br />
             <span>added by {blog.user.name}</span>
           </p>
@@ -225,9 +238,9 @@ const App = () => {
               {comment}
             </li>
           )}
-          
+
         </ul>
-        <button onClick={() => backClick()}>back</button>
+        <Button variant="contained" color="secondary" onClick={() => backClick()}>back</Button>
       </div>
     )
   }
@@ -235,81 +248,90 @@ const App = () => {
   const UsersList = ({ users }) => (
     <div>
       <h2>Users</h2>
-      <table>
-        <tbody>
-          <tr><th>&nbsp;</th><th>blogs created</th></tr>
-          {users.map(user =>
-            <tr key={user.id}>
-              <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            <TableRow><th>&nbsp;</th><th>blogs created</th></TableRow>
+            {users.map(user =>
+              <TableRow key={user.id}>
+                <TableCell><Link to={`/users/${user.id}`}>{user.name}</Link></TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 
   const Menu = ({ username, logoutClick }) => {
-    const padding = {
+    /*const padding = {
       paddingRight: 5
-    }
+    }*/
     return (
-      <div id="blog-app-menu">    
-        <Link style={padding} to="/blogs">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        <span>{username} logged in&nbsp;
-          <button onClick={logoutClick}>
-            logout
-          </button>
-        </span>
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/">
+            home
+          </Button>
+          <Button color="inherit" component={Link} to="/blogs">blogs</Button>
+          <Button color="inherit" component={Link} to="/users">users</Button>
+          <span>{username} logged in&nbsp;
+            <Button color="inherit" onClick={logoutClick}>
+              logout
+            </Button>
+          </span>
+        </Toolbar>
+      </AppBar>
     )
   }
 
   return (
-    <div>
-      <Menu 
-        username={loggedUser.name} 
-        logoutClick={handleLogoutClick} 
-      />
-      <Notification />
-      <h2>Blog app</h2>
-      <Switch>
-        <Route path="/users/:id">
-          <User user={user} />
-        </Route>
-        <Route path="/blogs/:id">
-          <Blog 
-            blog={blog} 
-            addLike={() => addLike(blog)}
-            addComment={() => addComment(blog)}
-            formRef={commentFormRef}
-          />
-        </Route>
-        <Route path="/users">
-          <UsersList users={users} />
-        </Route>
-        <Route path="/blogs">
-          { blogForm()}
-          {blogsSortedByLikes.map(blog =>
-          <BlogList
-              key={blog.id}
+    <Container>
+      <div>
+        <Menu
+          username={loggedUser.name}
+          logoutClick={handleLogoutClick}
+        />
+        <Notification />
+        <h2>Blog app</h2>
+        <Switch>
+          <Route path="/users/:id">
+            <User user={user} />
+          </Route>
+          <Route path="/blogs/:id">
+            <Blog
               blog={blog}
+              addLike={() => addLike(blog)}
+              addComment={() => addComment(blog)}
+              formRef={commentFormRef}
             />
-          )}
-        </Route>
-        <Route path="/">
-          { blogForm()}
-          {blogsSortedByLikes.map(blog =>
-          <BlogList
-              key={blog.id}
-              blog={blog}
-            />
-          )}
-          <UsersList users={users} />
-        </Route>
-      </Switch>
-    </div>
+          </Route>
+          <Route path="/users">
+            <UsersList users={users} />
+          </Route>
+          <Route path="/blogs">
+            {blogForm()}
+            {blogsSortedByLikes.map(blog =>
+              <BlogList
+                key={blog.id}
+                blog={blog}
+              />
+            )}
+          </Route>
+          <Route path="/">
+            {blogForm()}
+            {blogsSortedByLikes.map(blog =>
+              <BlogList
+                key={blog.id}
+                blog={blog}
+              />
+            )}
+            <UsersList users={users} />
+          </Route>
+        </Switch>
+      </div>
+    </Container>
   )
 }
 

@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import {
+  Button,
+  TextareaAutosize,
+} from '@material-ui/core'
 
 const CommentForm = ({ createComment, blog }) => {
 
@@ -21,7 +25,7 @@ const CommentForm = ({ createComment, blog }) => {
       <form onSubmit={addComment}>
         <div>
           comment:&nbsp;
-          <textarea
+          <TextareaAutosize
             id="new-blog-comment"
             type="text"
             value={newComment}
@@ -29,7 +33,7 @@ const CommentForm = ({ createComment, blog }) => {
             onChange={({ target }) => setNewComment(target.value)}
           />
         </div>
-        <button id="create-button" type="submit">create</button>
+        <Button variant="contained" color="primary" id="create-button" type="submit">create</Button>
       </form>
     </div>
   )
