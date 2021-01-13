@@ -44,3 +44,8 @@ table, th, td {
 th, td { 
   padding: 10px;
 }
+
+#blog-app-menu {
+  padding: 5px;
+  background-color: #c9c9ca;
+}

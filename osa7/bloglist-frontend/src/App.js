@@ -127,7 +127,7 @@ const App = () => {
   )
 
   const blogForm = () => (
-    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+    <Togglable buttonLabel="Create new" ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   )
@@ -228,17 +228,31 @@ const App = () => {
     </div>
   )
 
+  const Menu = ({ username, logoutClick }) => {
+    const padding = {
+      paddingRight: 5
+    }
+    return (
+      <div id="blog-app-menu">    
+        <Link style={padding} to="/blogs">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+        <span>{username} logged in&nbsp;
+          <button onClick={logoutClick}>
+            logout
+          </button>
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <h2>blogs</h2>
+      <Menu 
+        username={loggedUser.name} 
+        logoutClick={handleLogoutClick} 
+      />
       <Notification />
-      <p>{loggedUser.name} logged in&nbsp;
-          <button onClick={handleLogoutClick}>
-          logout
-          </button>
-      </p>
-      { blogForm()}
-      <br />
+      <h2>Blog app</h2>
       <Switch>
         <Route path="/users/:id">
           <User user={user} />
@@ -247,7 +261,20 @@ const App = () => {
           <Blog blog={blog} 
             addLike={() => addLike(blog)} />
         </Route>
+        <Route path="/users">
+          <UsersList users={users} />
+        </Route>
+        <Route path="/blogs">
+          { blogForm()}
+          {blogsSortedByLikes.map(blog =>
+          <BlogList
+              key={blog.id}
+              blog={blog}
+            />
+          )}
+        </Route>
         <Route path="/">
+          { blogForm()}
           {blogsSortedByLikes.map(blog =>
           <BlogList
               key={blog.id}
