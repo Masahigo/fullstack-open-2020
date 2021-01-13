@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import CommentForm from './components/CommentForm'
 import Notification from './components/Notification'
 import { setNotification } from './reducers/notificationReducer'
-import { createBlog, /* removeBlog, */ addBlogLike, initializeBlogs } from './reducers/blogReducer'
+import { createBlog, /* removeBlog, */ addBlogLike, initializeBlogs, addBlogComment } from './reducers/blogReducer'
 import { setUser, clearUser } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
 import Togglable from './components/Togglable'
@@ -20,6 +21,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
+  const commentFormRef = useRef()
 
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
@@ -90,6 +92,13 @@ const App = () => {
   const addLike = blog => {
     dispatch(addBlogLike(blog))
     dispatch(setNotification(`New like for '${blog.title}' added`, 2))
+  }
+
+  const addComment = blog => {
+    //console.log('updated blog with comment', blog)
+    commentFormRef.current.toggleVisibility()
+    dispatch(addBlogComment(blog))
+    dispatch(setNotification(`New comment for '${blog.title}' added`, 2))
   }
 
   /*const remove = blog => {
@@ -180,14 +189,14 @@ const App = () => {
     )
   }
 
-  const Blog = ({ blog, addLike }) => {
+  const Blog = ({ blog, addLike, addComment, formRef }) => {
     const history = useHistory()
 
     const backClick = () => {
       history.push('/')
     }
 
-    console.log("Blog", blog)
+    //console.log("Blog", blog)
 
     if (!blog) {
       return null
@@ -206,6 +215,18 @@ const App = () => {
             <span>added by {blog.user.name}</span>
           </p>
         </div>
+        <h3>comments</h3>
+        <Togglable buttonLabel="Add comment" ref={formRef}>
+          <CommentForm createComment={addComment} blog={blog} />
+        </Togglable>
+        <ul>
+          {blog.comments.map((comment, index) =>
+            <li key={index}>
+              {comment}
+            </li>
+          )}
+          
+        </ul>
         <button onClick={() => backClick()}>back</button>
       </div>
     )
@@ -258,8 +279,12 @@ const App = () => {
           <User user={user} />
         </Route>
         <Route path="/blogs/:id">
-          <Blog blog={blog} 
-            addLike={() => addLike(blog)} />
+          <Blog 
+            blog={blog} 
+            addLike={() => addLike(blog)}
+            addComment={() => addComment(blog)}
+            formRef={commentFormRef}
+          />
         </Route>
         <Route path="/users">
           <UsersList users={users} />

@@ -9,6 +9,11 @@ const blogSchema = mongoose.Schema({
       required: false,
       default: 0
     },
+    comments: {
+      type: [String],
+      required: false,
+      default: []
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
